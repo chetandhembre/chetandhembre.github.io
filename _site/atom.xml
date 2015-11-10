@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  
+    <title type="text" xml:lang="en">Dream Code</title>
+    <link type="application/atom+xml" rel="self" href="http://chetandhembre.github.io/atom.xml"/>
+  
+  <link href="http://chetandhembre.github.io/"/>
+  <id>http://chetandhembre.github.io/</id>
+  <updated>2015-11-10T10:52:34Z</updated>
+  <author>
+    <name>Chetan Dhembre</name>
+    <email>chetandhembre@gmail.com</email>
+  </author>
+  <rights type="text">Copyright © 2015 Chetan Dhembre. All rights reserved.</rights>
+  
+  <entry>
+  <title type="text">Hello Docker !!</title>
+  <link rel="alternate" type="text/html" href="http://chetandhembre.github.io/hello-docker.html" />
+  <id>http://chetandhembre.github.io/Hello-Docker!!</id>
+  <published>2015-05-25T22:35:21Z</published>
+  <updated>2015-05-25T22:35:21Z</updated>
+  <content type="html"><![CDATA[ <p>Docker !! , Docker has been buzz world in technology world lately, and many people
+are jumping into it. But there are so many what/why/how questions about docker is
+present in newbie&rsquo;s mind.</p>
+
+<p>First I wont go in depth details about in docker in this post.</p>
+
+<p>Lets get answers for these questions step by step.</p>
+
+<h2>What is Docker ?</h2>
+
+<p>here is description for docker from http://www.docker.com</p>
+
+<pre><code>Docker is an open platform for developers and sysadmins to build, ship, and run
+distributed applications
+</code></pre>
+
+<p>So first docker is open source platform which helps not only developer develop distributed
+systems but also help sysadmins manage these systems in diverse environment.</p>
+
+<p>This is containers for our application like we have containers in shipping industry.</p>
+
+<h2>Ok But why we need Docker ?</h2>
+
+<p>If you look around, you will see your development team is using variety of OS
+for developing application most probably they are using windows/OSX and we usually
+have linux based system in production. Problem
+with this is many technology which we uses for building this systems usually behave
+differently is different OS. Many time you will see people complaining about
+this code is working on my machine but not working on production  or my colleague&rsquo;s
+machine.</p>
+
+<p>But when you <code>Dockerized</code> your app you can use it on any OS. Thats really make
+things simpler not only for developer but also sysadmin.</p>
+
+<p>Also docker provide on hub where pre build Dockerized apps are present which are
+very great to getting started with project.</p>
+
+<h2>How is this different from Virtual Machines?</h2>
+
+<p>As you mentioned earlier that docker is container, next question pops into your
+mind is <code>isn't it similar to Virtual Machines ?</code>. And this is valid question.</p>
+
+<p>Here is explaination for this from http://www.docker.com</p>
+
+<p><img src="http://siliconangle.com/files/2014/08/Docker-vs-Virtualization.jpg" alt="Docker VS Virtual Machines" /></p>
+
+<p>From this it is clear that docker is more portable, light weight than VM.
+which is great.</p>
+
+<h1>How can we use Docker ?</h1>
+
+<p>So all you excited about docker ? Lets use them in hosting simple static website</p>
+
+<p>I wont cover installation of docker here. There is great explaination <a href="https://docs.docker.com/installation/#installation">here</a>.</p>
+
+<p>Lets do something simple but exciting. Lets run our simple Hello world static
+website. What is better than <code>Nginx</code> to server static content.</p>
+
+<p>Lets create directory named HelloDocker.</p>
+
+<pre><code>mkdir HelloDocker
+cd HelloDocker
+</code></pre>
+
+<p>Create directory where we will have simple <code>index.html</code>. And our simple html</p>
+
+<pre><code>
+mkdir app
+touch ./app/index.html
+echo "&lt;h1&gt;Hellow Docker!!&lt;/h1&gt;" &gt; ./app/index.html
+</code></pre>
+
+<p>Docker require <code>Dockerfile</code> in root directory of you app to identity it is <code>Dockerized</code> app</p>
+
+<pre><code>touch Dockerfile
+</code></pre>
+
+<p>Add following code in your <code>Dockerfile</code></p>
+
+<pre><code>FROM kyma/docker-nginx
+ADD app/ /var/www
+CMD 'nginx'
+</code></pre>
+
+<p>Let me explain code we added in Dockerfile.
+As I mentioned earlier docker hub has pre build docker images for many applications.
+So in first line we are imporing <code>nginx</code> image from hub using <code>FROM kyma/docker-nginx</code>.
+This makes our docker container extendable which help us to make reusable docker images.</p>
+
+<p>To host our website in nginx we have to move content of <code>app</code> folder to <code>/var/www</code> folder provided by
+imported nginx docker image.</p>
+
+<p>Lastly just run <code>nginx</code> to start our nginx.</p>
+
+<p>You might be seeing lots of costume command in Dockerfile which are specific for docker.
+You can learn about it <a href="https://docs.docker.com/reference/commandline/cli/">here</a></p>
+
+<p>PS: remember code in Dockerfile is specific to our imported nginx image. If you change image you might require to change code.</p>
+
+<p>So lets build our first docker image using running following command in root directory</p>
+
+<pre><code>docker build -t chetan/HelloDocker .
+</code></pre>
+
+<p>Here we are creating docker image of our app and tagged it as <code>chetan/HelloDocker</code>. And last <code>.</code> is for directory from which
+we have to create docker image.</p>
+
+<p>You can check your image by runing following command</p>
+
+<pre><code>docker image
+</code></pre>
+
+<p>Lets run this our simple docker app by following command</p>
+
+<pre><code>docker run -p 8080:80 -d chetan/HelloDocker
+</code></pre>
+
+<p>Running your image with -d runs the container in detached mode, leaving the container running in the background.
+The -p flag redirects a public port(8080) to a private port(80) in the container.</p>
+
+<p>To check our website is working run following command</p>
+
+<pre><code>curl localhost:8080
+</code></pre>
+
+<p>Yeah!!! we run our first docker app. Isn&rsquo;t it simple ?</p>
+
+<p>Happy Dockering !!!</p>
+
+<p>PS: If you are using <code>boot2docker</code> to run docker then run following command to visit our website</p>
+
+<pre><code>curl $(boot2docker ip):8080
+</code></pre>
+ ]]></content>
+</entry>
+
+
+  <entry>
+  <title type="text">How to create dynamic graph on server side?</title>
+  <link rel="alternate" type="text/html" href="http://chetandhembre.github.io/how-to-create-dynamic-graph-on-server-side.html" />
+  <id>http://chetandhembre.github.io/how-to-create-dynamic-graph-on-server-side</id>
+  <published>2015-01-23T22:35:21Z</published>
+  <updated>2015-01-23T22:35:21Z</updated>
+  <content type="html"><![CDATA[ <p>One fine weekend I asked <em>Sam</em> one question &ldquo;How to create dynamic graph on server side?&rdquo;. Question made <em>Sam</em>
+think little but after sometime <em>Sam</em> came back with answer as usual and said &ldquo;why not use <strong>phantom.js</strong> here ?&rdquo;..After
+noticing my confused face <em>Sam</em> started to explain me solution step by step, here is how we solve this problem,</p>
+
+<p>1.Create simple line chart in browser</p>
+
+<p>Creating line chart was simple task. We selected <a href="https://razorflow.com/features/">razorflow</a> as our charting library
+(you can select library of your choice) and we came up with very simple line chart, below is simple code snippet to do it,</p>
+
+<pre><code class="js">
+function chart1(data) {
+  StandaloneDashboard(function(db){
+    var chart = new ChartComponent(data['caption']);
+    chart.setDimensions (7, 7);
+    chart.setCaption(data['caption']);
+    chart.setLabels (data['labels']);
+    chart.addSeries (data["series"]["id"], data["series"]["name"], data["series"]["seriesData"], {
+      seriesDisplayType: "line"
+    });
+    chart.setYAxis(data["yaxis"]["label"], {numberPrefix: data["yaxis"]["numberPrefix"], numberHumanize: true});
+    db.addComponent (chart);
+  });
+}
+</code></pre>
+
+<p>Here is full version of above code with output</p>
+
+<p><a class="jsbin-embed" href="http://jsbin.com/laxoka/4/embed?html,output">JS Bin</a><script src="http://static.jsbin.com/js/embed.js"></script>.</p>
+
+<p>We are storing data into <code>window.data</code> so that we can give it to <em>razorflow</em> to render graph. And we done rendering line chart in browser. Most of above code is chart library related.</p>
+
+<p>2.Render Graph using <em>PhantomJS</em> on server side and create PNG image</p>
+
+<p>We are using awesome <a href="http://phantomjs.org/">PhantomJS</a> library to get headless browser at server side. You can install <em>PhantomJS</em> on your machine by following instructions <a href="http://phantomjs.org/download.html">here</a>.
+But we are not installing <em>phantomjs</em> manually, we are using awesome <em><a href="https://www.npmjs.com/package/phantomjs">phantomjs</a></em> module from <em><a href="https://npmjs.com">npm</a></em>,
+Here is code snippet which render graph and create PNG of it</p>
+
+<pre><code class="js">  //filename : phantomjs_render.js
+  var page = require('webpage').create();
+
+  page.onLoadFinished   = function(status) {
+    if (status === 'success') {
+        setTimeout(function () {
+          page.render('./static_graph.png')
+        }, 0)
+        phantom.exit();
+    } else {
+      phantom.exit();
+    }
+  };  
+
+  page.open('line_graph.html', function () {
+  });
+</code></pre>
+
+<p>lets run above code using following command</p>
+
+<pre><code class="sh">$ phantomjs ./phantomjs_render.js
+</code></pre>
+
+<p>Lets assume that above html code is in <code>line_graph.html</code> file. We are using  <em>phantomJS</em> to open html file (or url) in headless browser
+and on loading finish it will create png and store it in <code>statis_graph.png</code>. We are using <a href="http://phantomjs.org/api/webpage/method/render.html">render</a> api which help
+us to create png.</p>
+
+<p>And remember to exit phantomjs browser using <code>phantom.exit()</code> otherwise your process wont exit.</p>
+
+<p>But remember we want to create dynamic graph images on server side &hellip; so we solve 50% of problem. let solve remaining 50%.</p>
+
+<p>3.Create dynamic graphs</p>
+
+<p>Lets continue with our current example. We are able to generate static graph image.
+To make graph true-ly  dynamic we have to some how send data dynamically to <code>line_graph.html</code>. We did modify our phantomjs_render.js file to accomplish this goal.
+code snippet is below.</p>
+
+<pre><code class="js">  //filename : phantomjs_render.js
+  var page = require('webpage').create();
+  var system = require('system');
+  var args = system.args;
+  var data = JSON.parse(system.args[1])
+
+
+  page.onLoadFinished   = function(status) {
+    if (status === 'success') {
+      page.evaluate(function(d) {
+        window.chart(d)
+      }, data);
+
+      setTimeout(function () {
+        page.render('./static_graph.png')
+      }, 0)
+      phantom.exit();
+    } else {
+      phantom.exit();
+    }
+  };  
+
+  page.open('line_graph.html', function () {});
+</code></pre>
+
+<p>We have to run following command to run above code in terminal</p>
+
+<pre><code class="sh">$ phantomjs ./phantomjs_render.js  stringified_data
+</code></pre>
+
+<p>Remember we can not have command arguemnt as json so we have to convert json data to string using <code>JSON.stringify</code>.</p>
+
+<p>We are using in build <code>system</code> from phantomjs to get argument list provided to <em>phantomjs</em> command.</p>
+
+<p>Here we are sending our data as second argument to <strong>phantomjs</strong> command which we can get in our javascript code from <code>line_graph.html</code> using <em><a href="http://phantomjs.org/api/system/property/args.html">system.args</a></em> api.</p>
+
+<p>Another interesting api we are using is <em><a href="http://phantomjs.org/api/webpage/method/evaluate.html">page.evaluate</a></em> which help us to run any javascript code in context of webpage in phatomjs
+browser. On <code>onLoadFinished</code> event on page we are calling <code>chart</code> method and pass our dynamic data to webpage which can be use to create line chart.</p>
+
+<p>4.No!! No command line stuff</p>
+
+<p>I exclaimed !! Sam replied calmly with &ldquo;Why not use <code>child_process</code> from node to run above code?&rdquo;, and with that we solve another problem. Here is code how to do it,</p>
+
+<pre><code class="js">//filename : phantomjs_test.js
+
+  var phantomjs = require('phantomjs')
+    , path = require('path')
+    , childProcess = require('child_process')
+
+  var binPath = phantomjs.path;
+
+
+  var createImage = function (data, url /*may be file path*/) {
+    var childArgs = [
+      path.join(__dirname, 'phantomjs_render.js'),
+      JSON.stringify(data),
+    ];
+
+
+    var spawn = childProcess.spawn
+    spawn(binPath, childArgs)
+  }
+</code></pre>
+
+<p>run above code using following command</p>
+
+<pre><code class="sh">node phantomjs_test.js
+</code></pre>
+
+<p>so here we are spawning new child process with  <code>phantomjs_render.js</code> and  stringify data as arguments. We can also pass other parameters
+dynamically. Thats it !! problem has been solved, Isn&rsquo;t it simple ? :)</p>
+
+<p>5.Advance Usage</p>
+
+<p>I asked this question to Sam because i want to send these dynamically generated graph image in email. Email or preciously email client
+has very poor support for SVG and embedded image. So you have to use <code>img</code> tag. Either you can put these dynamically generated
+image to <code>s3</code> or generate dynamically when request come for it. You can find advance code for it <a href="https://github.com/chetandhembre/blog/tree/master/dynamic_graph_image_phantomjs">here</a>.</p>
+ ]]></content>
+</entry>
+
+
+
+</feed>
