@@ -1,0 +1,204 @@
+---
+layout: post
+title: "Data flow in React and React-Native"
+date: 2015-11-10 15:35:21 +0530
+comments: true
+categories:
+- react
+- react-native
+- flux
+- redux
+- data flow
+---
+
+I have been playing with react-native for one month. What I am doing in it will have it's own post :p
+
+Let's dive into subject
+
+###1. What is React ?
+
+You will find many very good explaination for `what is React ?` on internet and Details explaination will be out of scope for this post. But to get things started here is how we can explain react in nutshell
+
+```
+react(data) => UI
+``` 
+It simply means `react` is function of `data` which give `UI`. So whenever data changes it will basically 
+rerender all UI related to it. What makes is faster than other view library is `virtual dom` and diffing 
+argorithm. 
+
+###2. State of current frontend application
+
+So lets take one step back and see how we are building our frontend application.
+
+->![State of current frontend application](/static/img/current_application_state.png)<-
+
+what above diagram says is we split our data on level of small views. We store data at level of view.
+
+###3. React way of frontend application 
+
+But as I said react is function which maps data to UI. Data and UI now becomes totaly different things. 
+
+->![State of current frontend application](/static/img/react_way.png)<-
+
+This is very interesting way to build and think about application. And it creates different set of challeges while dealing with data in react and thats where things get interesting. But how can we solve it ?
+
+###4.Flux architecture
+
+[Flux](https://facebook.github.io/flux/) architecture is created at facebook to tackle problem created by React way of doing things. 
+flux can be explained as `unidirectional data flow` architecture. 
+Let's dive deep into various part of flux. 
+
+####4.1 Stores
+
+So we can current understading of react as 
+
+```
+data ==> UI
+```
+
+but remember there are many functionality surrounding data like who will access data, what is policy to edit data and so on ?
+
+So data is not just plain object. To avoid confusion let's call data as `Store`. So now we have
+
+```
+Stores ==> UI
+```
+
+I would like to point out that `Stores` are not `model` from MVC. 
+
+Another important things to understand here is UI can only read data directly from Stores but can not update it because undirectional nature of flux.
+
+####4.2 Action
+
+consider `Actions` are things happen in application. For example in todo app following can be actions
+
+* Add TODO
+* Delete TODO
+* Edit TODO
+
+Remeber these are not DOM events. So now we have
+
+```
+Action    Stores ==> UI
+```
+
+####4.3 Dispatcher
+
+So basically missing part between action and stores is dispatcher. 
+
+Following are functionality of `dispatcher`
+
+1. every action should passes through dispatcher
+2. every store register to dispatcher
+
+```
+Action ==> Dispatcher ==> Stores ==> UI
+```
+
+####4.4 Flux event flow diagram 
+
+here is full diagram explaining how flux undirectional data flow architecture works
+
+```
+				                     (Action)
+				   _______________________________________________
+				   |          |                                  ^
+				   v          V                                  |
+				Server ==> Action ==> Dispatcher ==> Stores ==> UI
+```
+
+So UI handle user input by invoking `Action` or `Server`, which in tern make call to dispacher which send action to stores. Stores depend on action changes data, and fire event which will be capture by UI then UI get data from Store. 
+
+####4.5 What about multiple store scenario ?
+
+But real world application we can have number of stores for example in our TODO app we can have User, TODOs as store.
+
+here is how flux architecture propose solution for it
+
+```
+	                                Action <------------| 
+	                                   |                |
+	                                   v                |
+	                               Dispatcher           | 
+	                                   |                |
+	                          _________v_________       |
+	                         |                   |      | 
+	                         v                   v      |
+	                      Store 1             Store 2   |
+	                         |___________________|      |
+	                         |                   |      | 
+	                         v                   v      | 
+	                       View 1              View 2 --|
+	                         |__________________________|
+                         
+``` 
+
+So all stores share same action and dispatcher. It means every stores register itself with single dispatcher, which send every action recieved from `Action` to `Stores`
+
+####4.6 What is Flux ?
+
+So we can explain flux using following points
+
+* unidirectional data flow
+* multiple store
+* It is specification and can have multiple implementation
+
+
+###5. Redux
+
+[Redux](http://rackt.org/redux/) is a predictable state container for JavaScript apps. 
+You can say it is implementation on `flux`. It is higly influence by [elm architecture](https://github.com/evancz/elm-architecture-tutorial)
+
+Followings are important features of `redux`
+
+* Single Store (single source of truth)
+* Immutable
+* no Dispatcher
+
+if look back achitecture of `flux` and role on `dispatcher` , dispatcher just send all actions to registered stores. But in redux we only have single store which means we do not require `dispatcher` as seperate entity.
+
+Another important thing is,  if you consider what happen when action happen on stores, stores usually apply business logic which result in change in state(data) to notify it, it fires date change event.
+
+Redux seperate this business logic from `Stores` as these can be written as normal functions. These function know as `Reducer`
+
+####5.1 Reducer
+`Reducer` in redux are simple functions which take current state and action to perform gives back new state.
+
+```
+(PreviousState, Action) ==> NewState
+```
+
+this makes redux immutable !!!
+
+Redux do not force immutability. But encourage it. 
+
+####5.2 flow in Redux
+
+so we action and event flow in redux look like this
+
+```
+								  |-------------------|
+								  |        Reducer    |
+								  |         ^ |       |
+								  v         | v       |
+								Action ==> Store ==> UI
+								       (dispatcher)
+```
+
+Another thing to notice here is `flux` and `redux` are not tied up with `React`.
+You can implement above architecture in any framework.
+
+* [flux + Angular](http://victorsavkin.com/post/99998937651/building-angular-apps-using-flux-architecture)
+* [redux + Angular 2](https://github.com/wbuchwalter/ng2-redux)
+
+###Conclusion
+
+I gave this talk in mumbai ruby meetup in october. here are my slides
+
+<script async class="speakerdeck-embed" data-id="7e9fd442d63d4c768a4bb695eafee090" data-ratio="1.33333333333333" src="//speakerdeck.com/assets/embed.js"></script>
+
+
+It can be difficult to start thinking data flow in your app right away but when you setup your app according to `flux` or `redux` then your app will become more simpler and adding new feature wont
+take so much time. 
+
+Keep making awesome app in react !!!
