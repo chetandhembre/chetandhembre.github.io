@@ -22,9 +22,8 @@ Service worker is standard build by W3C working group. Here is how specification
 
 ```
 
-The service worker is a generic entry point for event-driven background processing in the Web Platform that 
-
-is extensible by other [specifications](http://www.w3.org/TR/service-workers/#extensibility).
+The service worker is a generic entry point for event-driven background processing in the Web Platform 
+that is extensible by other [specifications](http://www.w3.org/TR/service-workers/#extensibility).
 
 ```
 you can read full specification [here](http://www.w3.org/TR/service-workers/) if you want to read 10's pages.If you want brief introduction to build your application using it then carry on reading this post.
