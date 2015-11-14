@@ -6,7 +6,7 @@
   
   <link href="http://chetandhembre.github.io/"/>
   <id>http://chetandhembre.github.io/</id>
-  <updated>2015-11-10T18:44:54Z</updated>
+  <updated>2015-11-15T01:16:46Z</updated>
   <author>
     <name>Chetan Dhembre</name>
     <email>chetandhembre@gmail.com</email>
@@ -14,7 +14,261 @@
   <rights type="text">Copyright © 2015 Chetan Dhembre. All rights reserved.</rights>
   
   <entry>
-  <title type="text">Data flow in react and react-native</title>
+  <title type="text">What are service worker ?</title>
+  <link rel="alternate" type="text/html" href="http://chetandhembre.github.io/service-worker.html" />
+  <id>http://chetandhembre.github.io/service-worker</id>
+  <published>2015-11-14T15:35:21Z</published>
+  <updated>2015-11-14T15:35:21Z</updated>
+  <content type="html"><![CDATA[ <p>There was buzz among my developer friends on twitter about recent announcement of <a href="https://twitter.com/flipkart_tech/status/663929833307574272">flipkart lite</a> and <a href="https://twitter.com/anandc/status/664833643215392769">snap-lite</a>. When you have millions of people using highly unrealiable network we need this kind of initiative from big companies. Hoping others will follow it.</p>
+
+<p>But as software developer I am more interested in how they built this experience. Flipkart shared their story <a href="http://tech-blog.flipkart.net/2015/11/progressive-web-app/">here</a>. They use lots of cool features which are implemented in chrome. One of thing which stand out is use of <code>service worker</code>. Which bring me to question <code>What are service worker?</code></p>
+
+<h3>Specification</h3>
+
+<p>Service worker is standard build by W3C working group. Here is how specification explain service worker</p>
+
+<pre><code>The service worker is a generic entry point for event-driven background processing in the Web Platform that is extensible by other [specifications](http://www.w3.org/TR/service-workers/#extensibility).
+</code></pre>
+
+<p>you can read full specification <a href="http://www.w3.org/TR/service-workers/">here</a> if you want to read 10&rsquo;s pages.If you want brief introduction to build your application using it then carry on reading this post.</p>
+
+<p>Let&rsquo;s asked ourself following questions about <code>service worker</code> and get answer for each one them</p>
+
+<ol>
+<li>Why should I use service worker ?</li>
+<li>What are service worker ?</li>
+<li>How to use service worker ?</li>
+</ol>
+
+
+<h3>Why shuold I use service worker ?</h3>
+
+<p>Here is list of where you can use service worker.</p>
+
+<ol>
+<li>You can control frontend caching using service worker. No need to use (ambiguos)[http://alistapart.com/article/application-cache-is-a-douchebag] <code>App Cache</code>. So your website will load fast.</li>
+<li>You can build <code>offline first</code> app</li>
+<li>You can implement native app like <code>background sync</code> feature in web app.</li>
+<li><code>push notification</code> to your website. finally :clap:</li>
+</ol>
+
+
+<p>I will be writing blog post explaning every use case in near future. But first lets get our basic right.</p>
+
+<h3>What are ServiceWorker ?</h3>
+
+<p>here are some basic features of ServiceWorker</p>
+
+<ol>
+<li>ServiceWorker run in it&rsquo;s own thread in browser, it has it&rsquo;s own context</li>
+<li>ServiceWorker is not tied to particular page but has it&rsquo;s own scope. (explain below)</li>
+<li>ServiceWorker script does not run in main thread in browser. So it can not access DOM.</li>
+<li>ServiceWorker can run even if webpage is not open (thats why it can do push notification and background sync)</li>
+<li>ServiceWorker are <code>event driven</code> which means browser can start and terminate them depend on events</li>
+<li>You can start service worker only on <code>https</code> (reason&rsquo;s are explain below)</li>
+</ol>
+
+
+<h3>How to use ServiceWorker ?</h3>
+
+<p>After knowing all usecase and features of ServiceWorker you must be excited to use your awesome web app. But before that we need to know life cycle of ServiceWorker.</p>
+
+<h3>Life cycle of ServiceWorker</h3>
+
+<p>ServiceWorker can be one of step below</p>
+
+<ol>
+<li>Downloading</li>
+<li>Installing</li>
+<li>Error</li>
+<li>Activated</li>
+<li>Idle</li>
+<li>Terminated</li>
+</ol>
+
+
+<p>Let&rsquo;s figure our what are these states stand for</p>
+
+<ol>
+<li><p>Downloading</p>
+
+<p> When we asked browser to <code>register</code> script as ServiceWorker it gets downloaded. Every refresh will check if
+ ServiceWorker script is changed or not. If changed then it will initiated ServiceWorker <code>Update</code> sequence (explained below).</p></li>
+<li><p>Installing</p>
+
+<p> after script downloaded browser installs it. In which it will create thread for script to run</p></li>
+<li><p>Error</p>
+
+<p> any uncaught exception in script will bring ServiceWorker in <code>Error</code> state. Do not worry next time you refresh page it will do through same step again.</p></li>
+<li><p>Activated</p>
+
+<p> If all things go right ServiceWorker goes to activation state. After that you can get all <code>fetch</code> event from page.</p></li>
+<li><p>Idle</p>
+
+<p> As name suggest when there are nothing to do in script, ServiceWorker goes to idle state.</p></li>
+<li><p>Terminated</p>
+
+<p> Browser control ServiceWorkers so it can terminate service worker any time. And you won&rsquo;t get any notification before that. But whenever event create in your web app browser will activate service worker.</p></li>
+</ol>
+
+
+<p>Here is simple flow chart of ServiceWorker&rsquo;s lifecycle</p>
+
+<p style="text-align:center;"><img src="/static/img/sw-lifecycle.png" alt="life cycle of ServiceWorker" /></p>
+
+<h3>Getting started</h3>
+
+<p>here simple way to register your script as service worker</p>
+
+<pre><code>if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/my-app/sw.js', {
+    scope: '/my-app/'
+  }).then(function(reg) {
+    console.log('Yey!', reg);
+  }).catch(function(err) {
+    console.log('Boo!', err);
+  });
+}
+</code></pre>
+
+<p>as code snippet says, We are first checking whether browser support ServiceWorker, <a href="http://caniuse.com/#feat=serviceworkers">here</a> is list of browser who support ServiceWorker.</p>
+
+<p>If users browser support then we ask browser to download script from <code>/my-app/sw.js</code> path and register it as service woker. Api is promise base so we have to give success and failure callback.</p>
+
+<p>Another important thing is registering script as service worker with <code>/my-app/</code> scope. ServiceWorker controls page which has url <code>/my-app/*</code>. If scope is not pass while registeration default is taking from path of script.</p>
+
+<h3>Events in ServiceWorker</h3>
+
+<p>remember I said service worker run in seperate thread than main thread of your web app. So main thread  communicate service worker using events.</p>
+
+<p>following are event you can handle in Service Worker</p>
+
+<ol>
+<li><p><code>install</code></p>
+
+<pre><code class="`"> self.addEventListener('install', function (event) {
+     console.log('service worker install successfully')
+ })  
+</code></pre>
+
+<p> This event fired when first time or new version of service worker script get installs. We can do some cache/db initialization here.</p></li>
+<li><p><code>activate</code></p>
+
+<pre><code class="`">
+ self.addEventListener('activate', function (event) {
+     console.log('service worker in activated !!!')
+ })
+</code></pre>
+
+<p> you can event saying service worker reach to &lsquo;activate&rsquo; state. And you can do good to go for your bussiness logic</p></li>
+<li><p><code>fetch</code></p>
+
+<pre><code class="` ">
+ self.addEventListener('fetch', function (event) {
+     console.log(event.request.url)
+ })
+
+ This one of the most powerful feature service worker has. 
+
+ Remeber I mentioned following things about service worker 
+ 1. Service worker control page for given scope. 
+ 2. Service worker only works on `https` connection except localhost (use for testing)
+
+ It is because this feature.
+
+ Service worker get fetch event on every request made by your web app. except following times
+
+ 1. iframes
+ 2. service worker registration fetch calls
+ 3. any fetch request from service worker itself to avoid infinite loop
+
+ So in other times basically service worker can work as proxy to your web app. take following example
+</code></pre>
+
+<p> self.addEventListener(&lsquo;fetch&rsquo;, function(event) {
+   fetch(&lsquo;/some-advertiser/log_url?url=&rsquo; + event.request.url) //logging every outgoing request
+   return fetch(event.request.url)
+ });</p>
+
+<p> <code>``
+ If some how hacker hijack your servicer worker script then it can do real damage. In order to avoid
+</code>man in middle<code>attack</code>https` condition is in force.</p></li>
+<li><p><code>message</code></p>
+
+<pre><code class="`"> self.addEventListener('message', function (event) {
+     //after getting message we send received data back to all control page
+     self.clients.matchAll().then(function(clients) {
+       clients.forEach(function(client) {
+         console.log(client);
+         client.postMessage(event.data);
+       });
+     });
+ })
+</code></pre>
+
+<p> till now we are just know communication from page to service worker. But <code>postMessage</code> api gives bidirectional communication channel.</p>
+
+<p> So in above example we are listening on message sent from controlled page using <code>postMessage</code> api, after getting message we just send message to all pages service worker controlled.</p>
+
+<p> This is very useful for logging activity on page.</p></li>
+</ol>
+
+
+<h3>am I controlling page now ?</h3>
+
+<p>I have mentioned lot of time in this post about &lsquo;controlling page&rsquo; from service worker because of power full api we have.</p>
+
+<p>But main question is when will your service worker control pages ?</p>
+
+<p>As I mention in <code>Getting Started</code> that we need to register service worker. So When you register worker first time document is all ready loaded so service worker can not control page. But after you refresh page
+service worker takes control.</p>
+
+<p>Things get little interesting when you trying to update service worker scripts.</p>
+
+<h3>Updating Service Worker</h3>
+
+<p>Updating service worker code is tedious.</p>
+
+<p>Remember service worker control all web page for given scope in addition to that we can have multiple page opens from same origin which can be in different state this makes updating service worker tedious.</p>
+
+<p>Updating service following steps followed by <code>chrome</code> update.
+So on every page refresh browser will check for service worker script update. It check bytewise for update of script. If new version of script found browser will download it in background and install it. But it wont make it active as multiple tab from same origin can use differnt service worker script which is not desirable.</p>
+
+<p>So to activate newly updated service worker we have to close all tab from browser. Another way is if old service worker got garbage collected then next time when event fire from page it will start new updated service worker.</p>
+
+<p>The easiest way at the moment is to close &amp; reopen the tab (cmd+w, then cmd+shift+t on Mac), or shift+reload then normal reload.</p>
+
+<p><a href="https://www.youtube.com/watch?v=VEshtDMHYyA">here</a> is video which demostrate how updating service worker works.</p>
+
+<h3>Debugging Service Worker</h3>
+
+<p>Service worker run in different thread in browser so debugging it is different than normal web page</p>
+
+<p>in chrome you can go to <code>chrome://serviceworker-internals</code> to see all service worker running in your browser. In addition to that you can inspect service worker code. It is very powerful features. <a href="https://www.chromium.org/blink/serviceworker/service-worker-faq">Here</a> is place where you can get full info debugging service worker in chrome.</p>
+
+<p>firefox is still building debugging tool for service worker <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1003097">here</a> is issue for that. But in firefox nightly you can do to <code>about:serviceworkers</code> to get service worker info (this is true when blog was written)</p>
+
+<h3>Conclusion</h3>
+
+<p>Web are always one step behind native apps on mobile. But <code>service worker</code> will really put native and web app neck to neck.</p>
+
+<p>You can stay updated with <code>service worker</code> by reading <a href="https://jakearchibald.github.io/isserviceworkerready/">this</a> website.</p>
+
+<p>To get more info about service worker please follow following people on github and twitter</p>
+
+<ol>
+<li>Jake Archibald <a href="https://github.com/jakearchibald">github</a> <a href="https://twitter.com/jaffathecake">twitter</a></li>
+<li>Alex Russell <a href="https://github.com/slightlyoff">github</a> <a href="https://twitter.com/slightlylate">twitter</a></li>
+</ol>
+
+
+<p>Thanks for reading !!! Keep hacking !!! :smiley: :smiley: :smiley:</p>
+ ]]></content>
+</entry>
+
+
+  <entry>
+  <title type="text">Data flow in React and React-Native</title>
   <link rel="alternate" type="text/html" href="http://chetandhembre.github.io/data-flow.html" />
   <id>http://chetandhembre.github.io/data-flow</id>
   <published>2015-11-10T15:35:21Z</published>
