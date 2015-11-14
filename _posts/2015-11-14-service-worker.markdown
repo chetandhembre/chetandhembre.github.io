@@ -158,6 +158,8 @@ following are event you can handle in Service Worker
 		console.log(event.request.url)
 	})
 
+	```
+	
 	This one of the most powerful feature service worker has. 
 
 	Remeber I mentioned following things about service worker 
@@ -246,7 +248,7 @@ firefox is still building debugging tool for service worker [here](https://bugzi
 
 Web are always one step behind native apps on mobile. But `service worker` will really put native and web app neck to neck.
 
-You can stay updated with `service worker` by reading [this](https://jakearchibald.github.io/isserviceworkerready/) website.
+You can stay updated with `service worker` by readings [this](https://jakearchibald.github.io/isserviceworkerready/) website.
 
 To get more info about service worker please follow following people on github and twitter
 
