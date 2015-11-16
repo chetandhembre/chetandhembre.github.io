@@ -15,7 +15,7 @@ I have been playing with react-native for one month. What I am doing in it will 
 
 Let's dive into subject
 
-###1. What is React ?
+### 1. What is React ?
 
 You will find many very good explaination for `what is React ?` on internet and Details explaination will be out of scope for this post. But to get things started here is how we can explain react in nutshell
 
