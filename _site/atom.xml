@@ -6,7 +6,7 @@
   
   <link href="http://chetandhembre.github.io/"/>
   <id>http://chetandhembre.github.io/</id>
-  <updated>2015-11-15T01:16:46Z</updated>
+  <updated>2015-11-21T20:10:31Z</updated>
   <author>
     <name>Chetan Dhembre</name>
     <email>chetandhembre@gmail.com</email>
@@ -27,7 +27,9 @@
 
 <p>Service worker is standard build by W3C working group. Here is how specification explain service worker</p>
 
-<pre><code>The service worker is a generic entry point for event-driven background processing in the Web Platform that is extensible by other [specifications](http://www.w3.org/TR/service-workers/#extensibility).
+<pre><code>
+The service worker is a generic entry point for event-driven background processing in the Web Platform 
+that is extensible by other [specifications](http://www.w3.org/TR/service-workers/#extensibility).
 </code></pre>
 
 <p>you can read full specification <a href="http://www.w3.org/TR/service-workers/">here</a> if you want to read 10&rsquo;s pages.If you want brief introduction to build your application using it then carry on reading this post.</p>
@@ -167,32 +169,39 @@
  self.addEventListener('fetch', function (event) {
      console.log(event.request.url)
  })
-
- This one of the most powerful feature service worker has. 
-
- Remeber I mentioned following things about service worker 
- 1. Service worker control page for given scope. 
- 2. Service worker only works on `https` connection except localhost (use for testing)
-
- It is because this feature.
-
- Service worker get fetch event on every request made by your web app. except following times
-
- 1. iframes
- 2. service worker registration fetch calls
- 3. any fetch request from service worker itself to avoid infinite loop
-
- So in other times basically service worker can work as proxy to your web app. take following example
 </code></pre>
 
-<p> self.addEventListener(&lsquo;fetch&rsquo;, function(event) {
-   fetch(&lsquo;/some-advertiser/log_url?url=&rsquo; + event.request.url) //logging every outgoing request
-   return fetch(event.request.url)
- });</p>
+<p> This one of the most powerful feature service worker has.</p>
 
-<p> <code>``
- If some how hacker hijack your servicer worker script then it can do real damage. In order to avoid
-</code>man in middle<code>attack</code>https` condition is in force.</p></li>
+<p> Remeber I mentioned following things about service worker</p>
+
+<ol>
+<li>Service worker control page for given scope.</li>
+<li>Service worker only works on <code>https</code> connection except localhost (use for testing)</li>
+</ol>
+
+
+<p> It is because this feature.</p>
+
+<p> Service worker get fetch event on every request made by your web app. except following times</p>
+
+<ol>
+<li>iframes</li>
+<li>service worker registration fetch calls</li>
+<li>any fetch request from service worker itself to avoid infinite loop</li>
+</ol>
+
+
+<p> So in other times basically service worker can work as proxy to your web app. take following example</p>
+
+<pre><code class="`"> self.addEventListener('fetch', function(event) {
+   fetch('/some-advertiser/log_url?url=' + event.request.url) //logging every outgoing request
+   return fetch(event.request.url)
+ });
+</code></pre>
+
+<p> If some how hacker hijack your servicer worker script then it can do real damage. In order to avoid
+ <code>man in middle</code> attack <code>https</code> condition is in force.</p></li>
 <li><p><code>message</code></p>
 
 <pre><code class="`"> self.addEventListener('message', function (event) {
@@ -252,7 +261,7 @@ So on every page refresh browser will check for service worker script update. It
 
 <p>Web are always one step behind native apps on mobile. But <code>service worker</code> will really put native and web app neck to neck.</p>
 
-<p>You can stay updated with <code>service worker</code> by reading <a href="https://jakearchibald.github.io/isserviceworkerready/">this</a> website.</p>
+<p>You can stay updated with <code>service worker</code> by readings <a href="https://jakearchibald.github.io/isserviceworkerready/">this</a> website.</p>
 
 <p>To get more info about service worker please follow following people on github and twitter</p>
 

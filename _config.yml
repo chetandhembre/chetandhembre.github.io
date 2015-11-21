@@ -14,10 +14,21 @@ url: http://chetandhembre.github.io
 baseurl: 
 title: Dream Code
 author: Chetan Dhembre
+name: Chetan Dhembre
 description: Personal blog and resume
 avatar: profile.png
 email: chetandhembre@gmail.com
 github: chetandhembre
 twitter: ichetandhembre
 instgram: chetandhembre 
-google_analytics: UA-69391421-1
+google_analytics: UA-41970388-1
+email_full: mailto:chetandhembre@gmail.com
+website: chetandhembre.in
+website_full: http://chetandhembre.in
+tel: +91 8097856680
+tel_full: tel:+91 8097856680
+google_maps: 'https://www.google.com/maps/place/Kalamboli,+Panvel,+Navi+Mumbai,+Maharashtra,+India/@19.0304352,73.0827204,14z/data=!3m1!4b1!4m2!3m1!1s0x3be7e9d6cbd86579:0x1b52688f772ebd48'
+address: Sadguru Apartment
+postcode: 410218
+city: Kalamboli
+country: India
